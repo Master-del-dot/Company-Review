@@ -8,7 +8,7 @@
   "scripts": {
     "dev:public": "npm --workspace public-site run dev",
     "dev:admin": "npm --workspace admin-panel run dev",
-    "build": "npm --workspace public-site run build:root",
+    "build": "npm --workspace admin-panel run build:root",
     "build:all": "npm --workspace public-site run build && npm --workspace admin-panel run build"
   }
 }
