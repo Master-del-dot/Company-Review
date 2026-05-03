@@ -1,0 +1,13 @@
+{
+  "name": "digital-business-card-suite",
+  "private": true,
+  "workspaces": [
+    "public-site",
+    "admin-panel"
+  ],
+  "scripts": {
+    "dev:public": "npm --workspace public-site run dev",
+    "dev:admin": "npm --workspace admin-panel run dev",
+    "build": "npm --workspace public-site run build && npm --workspace admin-panel run build"
+  }
+}
