@@ -152,6 +152,7 @@ input[type="color"] {
 .primary-button,
 .ghost-button,
 .danger-button,
+.link-button,
 .upload-field {
   min-height: 42px;
   border: 0;
@@ -173,6 +174,13 @@ input[type="color"] {
 .ghost-button {
   color: var(--brand, #03736e);
   background: rgba(3, 115, 110, 0.09);
+}
+
+.link-button {
+  min-height: 34px;
+  color: var(--brand, #03736e);
+  background: transparent;
+  padding: 0;
 }
 
 .danger-button {
