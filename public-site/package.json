@@ -7,6 +7,7 @@
     "dev": "vite --host 0.0.0.0 --port 5173",
     "build": "vite build",
     "build:root": "vite build --outDir ../dist --emptyOutDir",
+    "build:pages": "vite build --base=./ --outDir ../dist --emptyOutDir",
     "preview": "vite preview --host 0.0.0.0 --port 4173"
   },
   "dependencies": {
