@@ -330,7 +330,10 @@ function Dashboard() {
       return;
     }
 
-    const { error } = await supabase.auth.updateUser(updates);
+    const redirectTo = window.location.href.split("#")[0].split("?")[0];
+    const { error } = await supabase.auth.updateUser(updates, {
+      emailRedirectTo: redirectTo,
+    });
 
     if (error) {
       setAccountStatus(error.message);
