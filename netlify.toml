@@ -1,0 +1,8 @@
+[build]
+  command = "npm --workspace public-site run build"
+  publish = "public-site/dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
