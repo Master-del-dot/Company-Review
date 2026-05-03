@@ -1,6 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ImagePlus, LogOut, Plus, Save, Trash2, UploadCloud } from "lucide-react";
+import {
+  BarChart3,
+  Brush,
+  Contact,
+  ImagePlus,
+  Link2,
+  LogOut,
+  MapPinned,
+  Megaphone,
+  Plus,
+  Save,
+  Share2,
+  Trash2,
+  UploadCloud,
+  UserCog,
+} from "lucide-react";
 import { hasSupabaseConfig, supabase } from "./supabase";
 import "./styles.css";
 
@@ -174,6 +189,7 @@ function UploadField({ label, path, onUploaded, accept, keepLast = 5 }) {
 }
 
 function Dashboard() {
+  const [activeSection, setActiveSection] = useState("overview");
   const [settings, setSettings] = useState(defaultSettings);
   const [offers, setOffers] = useState([]);
   const [customLinks, setCustomLinks] = useState([]);
@@ -207,6 +223,13 @@ function Dashboard() {
   });
 
   const previewColor = useMemo(() => settings.primary_color || "#03736e", [settings.primary_color]);
+  const navigation = [
+    { id: "overview", label: "Overview", icon: <BarChart3 size={18} /> },
+    { id: "brand", label: "Brand", icon: <Brush size={18} /> },
+    { id: "contact", label: "Contact", icon: <Contact size={18} /> },
+    { id: "social", label: "Social", icon: <Share2 size={18} /> },
+    { id: "content", label: "Content", icon: <Megaphone size={18} /> },
+  ];
 
   useEffect(() => {
     loadAll();
@@ -383,7 +406,21 @@ function Dashboard() {
         </button>
       </header>
 
-      <section className="stats-band">
+      <nav className="dashboard-nav" aria-label="Dashboard sections">
+        {navigation.map((item) => (
+          <button
+            className={activeSection === item.id ? "active" : ""}
+            key={item.id}
+            onClick={() => setActiveSection(item.id)}
+            type="button"
+          >
+            {item.icon}
+            <span>{item.label}</span>
+          </button>
+        ))}
+      </nav>
+
+      <section className="stats-band dashboard-section" hidden={activeSection !== "overview"}>
         <div>
           <span>Total Visitors</span>
           <strong>{analytics.toLocaleString()}</strong>
@@ -398,9 +435,9 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel dashboard-section" hidden={activeSection !== "overview"}>
         <div className="panel-heading">
-          <h2>Admin Account</h2>
+          <h2><UserCog size={20} /> Admin Account</h2>
         </div>
         <form className="form-grid" onSubmit={updateAdminAccount}>
           <Field
@@ -432,9 +469,9 @@ function Dashboard() {
         {accountStatus && <p className="form-message">{accountStatus}</p>}
       </section>
 
-      <section className="panel">
+      <section className="panel dashboard-section" hidden={activeSection !== "brand"}>
         <div className="panel-heading">
-          <h2>Branding Setup</h2>
+          <h2><ImagePlus size={20} /> Branding Setup</h2>
           <button className="primary-button" onClick={saveSettings} type="button">
             <Save size={18} />
             Save Settings
@@ -453,8 +490,8 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
-        <h2>God Level Colors</h2>
+      <section className="panel dashboard-section" hidden={activeSection !== "brand"}>
+        <h2><Brush size={20} /> Visual Colors</h2>
         <div className="form-grid color-grid">
           <Field label="Page Background" type="color" value={settings.page_background_color} onChange={(value) => updateSetting("page_background_color", value)} />
           <Field label="Card Background" value={settings.card_background_color} onChange={(value) => updateSetting("card_background_color", value)} />
@@ -467,8 +504,8 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
-        <h2>Contact Information</h2>
+      <section className="panel dashboard-section" hidden={activeSection !== "contact"}>
+        <h2><Contact size={20} /> Contact Information</h2>
         <div className="form-grid">
           <Field label="Phone Number" value={settings.phone} onChange={(value) => updateSetting("phone", value)} />
           <Field label="WhatsApp Number / Link" value={settings.whatsapp_url} onChange={(value) => updateSetting("whatsapp_url", value)} />
@@ -478,8 +515,8 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
-        <h2>Social Media Links</h2>
+      <section className="panel dashboard-section" hidden={activeSection !== "social"}>
+        <h2><Share2 size={20} /> Social Media Links</h2>
         <div className="form-grid">
           <Field label="Facebook URL" value={settings.facebook_url} onChange={(value) => updateSetting("facebook_url", value)} />
           <Field label="Instagram URL" value={settings.instagram_url} onChange={(value) => updateSetting("instagram_url", value)} />
@@ -510,9 +547,9 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel dashboard-section" hidden={activeSection !== "social"}>
         <div className="panel-heading">
-          <h2>Extra Links</h2>
+          <h2><Link2 size={20} /> Extra Links</h2>
           <button className="primary-button" onClick={addLink} type="button">
             <Plus size={18} />
             Add Link
@@ -564,8 +601,8 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
-        <h2>Location Management</h2>
+      <section className="panel dashboard-section" hidden={activeSection !== "contact"}>
+        <h2><MapPinned size={20} /> Location Management</h2>
         <div className="form-grid">
           <Field label="Address Text" value={settings.address_text} onChange={(value) => updateSetting("address_text", value)} />
           <Field label="Google Maps URL" value={settings.google_maps_url} onChange={(value) => updateSetting("google_maps_url", value)} />
@@ -573,9 +610,9 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel dashboard-section" hidden={activeSection !== "content"}>
         <div className="panel-heading">
-          <h2>Offers & Announcements</h2>
+          <h2><Megaphone size={20} /> Offers & Announcements</h2>
           <button className="primary-button" onClick={addOffer} type="button">
             <Plus size={18} />
             Add Offer
@@ -616,9 +653,9 @@ function Dashboard() {
         </div>
       </section>
 
-      <section className="panel">
+      <section className="panel dashboard-section" hidden={activeSection !== "content"}>
         <div className="panel-heading">
-          <h2>Custom Text / Image Blocks</h2>
+          <h2><ImagePlus size={20} /> Custom Text / Image Blocks</h2>
           <button className="primary-button" onClick={addSection} type="button">
             <Plus size={18} />
             Add Block
