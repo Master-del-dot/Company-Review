@@ -67,6 +67,42 @@ function getMapSrc(embedCode) {
   return match?.[1] || "";
 }
 
+function escapeVcardText(value) {
+  return String(value || "")
+    .replace(/\\/g, "\\\\")
+    .replace(/\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+function downloadVcard(settings) {
+  const lines = [
+    "BEGIN:VCARD",
+    "VERSION:3.0",
+    `FN:${escapeVcardText(settings.business_name)}`,
+    `ORG:${escapeVcardText(settings.business_name)}`,
+  ];
+
+  if (settings.phone) lines.push(`TEL;TYPE=WORK,VOICE:${settings.phone}`);
+  if (settings.email) lines.push(`EMAIL;TYPE=WORK:${settings.email}`);
+  if (settings.address_text) lines.push(`ADR;TYPE=WORK:;;${escapeVcardText(settings.address_text)};;;;`);
+  if (settings.website_url) lines.push(`URL:${settings.website_url}`);
+  if (settings.tagline) lines.push(`NOTE:${escapeVcardText(settings.tagline)}`);
+
+  lines.push("END:VCARD");
+
+  const blob = new Blob([`${lines.join("\n")}\n`], { type: "text/vcard;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  const safeName = String(settings.business_name || "contact").replace(/[^a-z0-9-]+/gi, "-").toLowerCase();
+  link.href = url;
+  link.download = `${safeName}.vcf`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 function IconLink({ href, label, children, dark }) {
   if (!href) {
     return (
@@ -280,10 +316,10 @@ function App() {
           </section>
         )}
 
-        <a className="contact-button" href={settings.vcf_file_url || "#"} download>
+        <button className="contact-button" onClick={() => downloadVcard(settings)} type="button">
           <Plus size={20} />
           Add to Contact
-        </a>
+        </button>
 
         <section className="location">
           <div className="location-heading">
