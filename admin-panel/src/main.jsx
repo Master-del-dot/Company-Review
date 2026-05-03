@@ -158,6 +158,12 @@ function Dashboard() {
   const [customSections, setCustomSections] = useState([]);
   const [analytics, setAnalytics] = useState(0);
   const [status, setStatus] = useState("");
+  const [accountStatus, setAccountStatus] = useState("");
+  const [accountForm, setAccountForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
   const [newOffer, setNewOffer] = useState({
     title: "",
     description: "",
@@ -182,6 +188,9 @@ function Dashboard() {
 
   useEffect(() => {
     loadAll();
+    supabase.auth.getUser().then(({ data }) => {
+      setAccountForm((current) => ({ ...current, email: data.user?.email || "" }));
+    });
   }, []);
 
   async function loadAll() {
@@ -303,6 +312,39 @@ function Dashboard() {
     window.location.reload();
   }
 
+  async function updateAdminAccount(event) {
+    event.preventDefault();
+    setAccountStatus("Updating...");
+
+    if (accountForm.password && accountForm.password !== accountForm.confirmPassword) {
+      setAccountStatus("Passwords do not match.");
+      return;
+    }
+
+    const updates = {};
+    if (accountForm.email.trim()) updates.email = accountForm.email.trim();
+    if (accountForm.password) updates.password = accountForm.password;
+
+    if (!updates.email && !updates.password) {
+      setAccountStatus("Add an email or password first.");
+      return;
+    }
+
+    const { error } = await supabase.auth.updateUser(updates);
+
+    if (error) {
+      setAccountStatus(error.message);
+      return;
+    }
+
+    setAccountForm((current) => ({ ...current, password: "", confirmPassword: "" }));
+    setAccountStatus(
+      updates.email
+        ? "Updated. If email confirmation is enabled in Supabase, check the new email inbox."
+        : "Password updated.",
+    );
+  }
+
   return (
     <main className="admin-shell" style={{ "--brand": previewColor }}>
       <header className="topbar">
@@ -329,6 +371,40 @@ function Dashboard() {
           <span>Custom Items</span>
           <strong>{customLinks.length + customSections.length}</strong>
         </div>
+      </section>
+
+      <section className="panel">
+        <div className="panel-heading">
+          <h2>Admin Account</h2>
+        </div>
+        <form className="form-grid" onSubmit={updateAdminAccount}>
+          <Field
+            label="Admin Email"
+            type="email"
+            value={accountForm.email}
+            onChange={(value) => setAccountForm((current) => ({ ...current, email: value }))}
+          />
+          <Field
+            label="New Password"
+            type="password"
+            value={accountForm.password}
+            onChange={(value) => setAccountForm((current) => ({ ...current, password: value }))}
+          />
+          <Field
+            label="Confirm New Password"
+            type="password"
+            value={accountForm.confirmPassword}
+            onChange={(value) => setAccountForm((current) => ({ ...current, confirmPassword: value }))}
+          />
+          <label className="form-action-label">
+            Save Login Details
+            <button className="primary-button" type="submit">
+              <Save size={18} />
+              Update Account
+            </button>
+          </label>
+        </form>
+        {accountStatus && <p className="form-message">{accountStatus}</p>}
       </section>
 
       <section className="panel">
