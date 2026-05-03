@@ -315,32 +315,104 @@ a {
 
 .share-panel {
   position: relative;
-  width: min(100%, 340px);
+  width: min(100%, 360px);
   display: grid;
   justify-items: center;
-  gap: 12px;
-  padding: 22px;
+  gap: 14px;
+  padding: 24px 20px 20px;
   border-radius: 8px;
   background: #ffffff;
   text-align: center;
 }
 
+.share-logo {
+  width: 86px;
+  height: 86px;
+  border: 3px solid var(--brand);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #ffffff;
+  color: var(--brand);
+  font-size: 38px;
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(20, 30, 28, 0.12);
+}
+
+.share-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .share-panel h2 {
   margin: 0;
   color: var(--heading);
-  font-size: 20px;
+  font-size: 22px;
+  line-height: 1.18;
 }
 
-.share-panel img {
+.share-qr {
   width: 220px;
   height: 220px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 8px;
+  object-fit: contain;
 }
 
-.share-panel p {
+.share-socials {
   width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 2px 0;
+}
+
+.share-link-row {
+  width: 100%;
+  min-height: 46px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  border-radius: 999px;
+  background: #f7faf9;
+}
+
+.share-link-row p {
+  min-width: 0;
   margin: 0;
   color: var(--body-text);
   font-size: 12px;
+  text-align: left;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.share-link-row button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 12px;
+  color: var(--button-text);
+  background: var(--button-bg);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.share-panel > .copy-button {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   overflow-wrap: anywhere;
 }
 

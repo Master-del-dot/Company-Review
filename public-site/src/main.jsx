@@ -13,7 +13,6 @@ import {
   Music2,
   Phone,
   Plus,
-  QrCode,
   Share2,
   Star,
 } from "lucide-react";
@@ -212,6 +211,44 @@ function App() {
   const activeOffer = offers[activeOfferIndex];
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(shareUrl)}`;
+  const shareLinks = [
+    {
+      href: whatsappHref,
+      label: "WhatsApp",
+      imageUrl: settings.whatsapp_icon_url,
+      icon: <MessageCircle size={22} />,
+    },
+    {
+      href: normalizeUrl(settings.facebook_url),
+      label: "Facebook",
+      imageUrl: settings.facebook_icon_url,
+      icon: <Facebook size={22} />,
+    },
+    {
+      href: normalizeUrl(settings.instagram_url),
+      label: "Instagram",
+      imageUrl: settings.instagram_icon_url,
+      icon: <Instagram size={22} />,
+    },
+    {
+      href: normalizeUrl(settings.tiktok_url),
+      label: "TikTok",
+      imageUrl: settings.tiktok_icon_url,
+      icon: <Music2 size={22} />,
+    },
+    {
+      href: normalizeUrl(settings.website_url),
+      label: "Website",
+      imageUrl: settings.website_icon_url,
+      icon: <Globe size={22} />,
+    },
+    ...customLinks.map((link) => ({
+      href: normalizeUrl(link.url),
+      label: link.label,
+      imageUrl: link.icon_image_url,
+      icon: getDynamicIcon(link.icon_name),
+    })),
+  ].filter((link) => link.href);
   const customStyle = {
     "--brand": brandColor,
     "--page-bg": settings.page_background_color || fallbackSettings.page_background_color,
@@ -353,18 +390,34 @@ function App() {
             <button className="share-close" onClick={() => setShareOpen(false)} type="button" aria-label="Close">
               ×
             </button>
-            <QrCode size={26} />
-            <h2>Share this card</h2>
-            <img src={qrUrl} alt="QR code for this website" />
-            <p>{shareUrl}</p>
+            <div className="share-logo">
+              {settings.logo_url ? (
+                <img src={settings.logo_url} alt={`${settings.business_name} logo`} />
+              ) : (
+                <span>{settings.business_name?.slice(0, 1) || "R"}</span>
+              )}
+            </div>
+            <img className="share-qr" src={qrUrl} alt="QR code for this website" />
+            <h2>{settings.business_name}</h2>
+            {shareLinks.length > 0 && (
+              <div className="share-socials" aria-label="Share links">
+                {shareLinks.map((link) => (
+                  <SocialLink key={`${link.label}-${link.href}`} href={link.href} label={link.label} imageUrl={link.imageUrl} icon={link.icon} />
+                ))}
+              </div>
+            )}
+            <div className="share-link-row">
+              <p>{shareUrl}</p>
+              <button onClick={copyLink} type="button" aria-label="Copy link">
+                {copyLabel}
+              </button>
+            </div>
             {navigator.share && (
               <button className="copy-button" onClick={shareSite} type="button">
+                <Share2 size={18} />
                 Share
               </button>
             )}
-            <button className="copy-button" onClick={copyLink} type="button">
-              {copyLabel}
-            </button>
           </div>
         </div>
       )}
