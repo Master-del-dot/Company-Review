@@ -19,11 +19,11 @@ create or replace function public.set_admin_credentials(admin_email text, admin_
 returns void
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 begin
   insert into public.admin_credentials (id, email, password_hash, updated_at)
-  values (1, lower(admin_email), crypt(admin_password, gen_salt('bf')), now())
+  values (1, lower(admin_email), extensions.crypt(admin_password, extensions.gen_salt('bf')), now())
   on conflict (id) do update
   set email = excluded.email,
       password_hash = excluded.password_hash,
@@ -35,18 +35,19 @@ create or replace function public.verify_admin_credentials(admin_email text, adm
 returns boolean
 language sql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
   select exists (
     select 1
     from public.admin_credentials
     where id = 1
       and email = lower(admin_email)
-      and password_hash = crypt(admin_password, password_hash)
+      and password_hash = extensions.crypt(admin_password, password_hash)
   );
 $$;
 
 revoke all on public.admin_credentials from anon, authenticated;
+grant execute on function public.set_admin_credentials(text, text) to authenticated;
 grant execute on function public.verify_admin_credentials(text, text) to anon, authenticated;
 
 -- Run this after changing the email/password values:
