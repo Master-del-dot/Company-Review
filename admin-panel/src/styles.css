@@ -184,6 +184,43 @@ input[type="color"] {
   text-decoration: none;
 }
 
+.developer-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(12, 22, 20, 0.58);
+}
+
+.developer-panel {
+  position: relative;
+  width: min(100%, 360px);
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(7, 18, 16, 0.28);
+}
+
+.developer-panel h2 {
+  margin: 0;
+}
+
+.developer-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: #eef3f1;
+  cursor: pointer;
+}
+
 .danger-button {
   width: 42px;
   padding: 0;

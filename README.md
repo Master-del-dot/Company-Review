@@ -193,6 +193,25 @@ Run this SQL file in Supabase if your project already existed before manual soci
 
 It adds logo URL columns for WhatsApp, Facebook, Instagram, TikTok, Website, and extra custom links.
 
+## Safe Admin Credential Table
+
+If you want a separate admin credential table, run:
+
+`supabase/migrations/005_safe_admin_credentials.sql`
+
+It stores:
+
+- admin email
+- hashed password
+
+It does not store readable/plain passwords. To set the value, run:
+
+```sql
+select public.set_admin_credentials('your-email@example.com', 'your-new-password');
+```
+
+The current admin panel still uses Supabase Auth for secure database and Storage permissions.
+
 ## Deploy Later
 
 You can deploy `public-site` and `admin-panel` separately on Vercel, Netlify, or any static host. Each app needs the same two environment variables:

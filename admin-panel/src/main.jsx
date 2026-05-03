@@ -43,6 +43,7 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [developerPopupOpen, setDeveloperPopupOpen] = useState(false);
 
   async function submit(event) {
     event.preventDefault();
@@ -74,18 +75,29 @@ function Login({ onLogin }) {
         <button className="primary-button" type="submit">
           Sign in
         </button>
-        <a className="link-button" href="https://wa.me/9779827305718?text=I%20forgot%20my%20admin%20password.%20Please%20help%20me%20reset%20it.">
-          Forgot password? Contact Developer
-        </a>
-        <button
-          className="link-button"
-          type="button"
-          onClick={() => window.open("https://wa.me/9779827305718?text=I%20need%20help%20with%20the%20admin%20login.", "_blank")}
-        >
-          Contact Developer
+        <button className="link-button" type="button" onClick={() => setDeveloperPopupOpen(true)}>
+          Forgot password?
         </button>
         {message && <p className="form-message">{message}</p>}
       </form>
+
+      {developerPopupOpen && (
+        <div className="developer-dialog" role="dialog" aria-modal="true" aria-label="Contact developer">
+          <section className="developer-panel">
+            <button className="developer-close" onClick={() => setDeveloperPopupOpen(false)} type="button" aria-label="Close">
+              ×
+            </button>
+            <div>
+              <p className="eyebrow">Password Help</p>
+              <h2>Contact Developer</h2>
+            </div>
+            <p className="form-message">Ask the developer to help reset your admin login.</p>
+            <a className="primary-button" href="https://wa.me/9779827305718?text=I%20forgot%20my%20admin%20password.%20Please%20help%20me%20reset%20it.">
+              Open WhatsApp
+            </a>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
