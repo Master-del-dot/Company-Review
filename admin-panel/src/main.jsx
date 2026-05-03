@@ -43,7 +43,6 @@ function Login({ onLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
-  const [resetMode, setResetMode] = useState(false);
 
   async function submit(event) {
     event.preventDefault();
@@ -57,95 +56,33 @@ function Login({ onLogin }) {
     onLogin();
   }
 
-  async function sendReset(event) {
-    event.preventDefault();
-    if (!email.trim()) {
-      setMessage("Write your email first.");
-      return;
-    }
-
-    setMessage("Sending reset link...");
-    const redirectTo = window.location.href.split("#")[0].split("?")[0];
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo,
-    });
-
-    setMessage(error ? error.message : "Reset link sent. Check your email inbox.");
-  }
-
-  return (
-    <main className="login-page">
-      <form className="login-card" onSubmit={resetMode ? sendReset : submit}>
-        <div>
-          <p className="eyebrow">Admin Panel</p>
-          <h1>{resetMode ? "Reset password" : "Sign in"}</h1>
-        </div>
-        <label>
-          Email
-          <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" required />
-        </label>
-        {!resetMode && (
-          <label>
-            Password
-            <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" required />
-          </label>
-        )}
-        <button className="primary-button" type="submit">
-          {resetMode ? "Send Reset Link" : "Sign in"}
-        </button>
-        <button className="link-button" type="button" onClick={() => setResetMode((current) => !current)}>
-          {resetMode ? "Back to sign in" : "Forgot password?"}
-        </button>
-        {message && <p className="form-message">{message}</p>}
-      </form>
-    </main>
-  );
-}
-
-function PasswordRecovery({ onDone }) {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  async function submit(event) {
-    event.preventDefault();
-
-    if (!password || password !== confirmPassword) {
-      setMessage("Passwords do not match.");
-      return;
-    }
-
-    setMessage("Updating password...");
-    const { error } = await supabase.auth.updateUser({ password });
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
-    setMessage("Password updated. You can sign in now.");
-    await supabase.auth.signOut();
-    window.history.replaceState({}, document.title, window.location.pathname);
-    onDone();
-  }
-
   return (
     <main className="login-page">
       <form className="login-card" onSubmit={submit}>
         <div>
           <p className="eyebrow">Admin Panel</p>
-          <h1>Create new password</h1>
+          <h1>Sign in</h1>
         </div>
         <label>
-          New Password
-          <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" required />
+          Email
+          <input value={email} onChange={(event) => setEmail(event.target.value)} type="email" required />
         </label>
         <label>
-          Confirm Password
-          <input value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} type="password" required />
+          Password
+          <input value={password} onChange={(event) => setPassword(event.target.value)} type="password" required />
         </label>
         <button className="primary-button" type="submit">
-          Save New Password
+          Sign in
+        </button>
+        <a className="link-button" href="https://wa.me/9779827305718?text=I%20forgot%20my%20admin%20password.%20Please%20help%20me%20reset%20it.">
+          Forgot password? Contact Developer
+        </a>
+        <button
+          className="link-button"
+          type="button"
+          onClick={() => window.open("https://wa.me/9779827305718?text=I%20need%20help%20with%20the%20admin%20login.", "_blank")}
+        >
+          Contact Developer
         </button>
         {message && <p className="form-message">{message}</p>}
       </form>
@@ -737,7 +674,6 @@ function Dashboard() {
 function App() {
   const [session, setSession] = useState(null);
   const [ready, setReady] = useState(false);
-  const [recoveryMode, setRecoveryMode] = useState(false);
 
   useEffect(() => {
     if (!hasSupabaseConfig) return;
@@ -747,10 +683,7 @@ function App() {
       setReady(true);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setRecoveryMode(true);
-      }
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       setSession(nextSession);
     });
 
@@ -769,7 +702,6 @@ function App() {
   }
 
   if (!ready) return <main className="loading-screen">Loading...</main>;
-  if (recoveryMode) return <PasswordRecovery onDone={() => setRecoveryMode(false)} />;
   return session ? <Dashboard /> : <Login onLogin={() => supabase.auth.getSession().then(({ data }) => setSession(data.session))} />;
 }
 

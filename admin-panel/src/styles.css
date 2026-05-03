@@ -181,6 +181,7 @@ input[type="color"] {
   color: var(--brand, #03736e);
   background: transparent;
   padding: 0;
+  text-decoration: none;
 }
 
 .danger-button {
